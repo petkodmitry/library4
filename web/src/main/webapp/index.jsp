@@ -16,12 +16,12 @@
     Логин:<BR>
     <INPUT type="text"
            name="login"
-           title="Логин:"
+           title="Логин"
            value=""><BR>
     Пароль:<BR>
     <INPUT type="password"
            name="password"
-           title="Пароль:"
+           title="Пароль"
            value=""><BR>
     <INPUT type="submit" value="Enter">
 </FORM>
