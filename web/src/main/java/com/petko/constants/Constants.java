@@ -7,4 +7,6 @@ public class Constants {
     public final static String PAGE_ERROR = "page.error";
     public final static String PAGE_MAIN = "page.main";
     public final static String PAGE_INDEX = "page.index";
+
+    public final static String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
 }

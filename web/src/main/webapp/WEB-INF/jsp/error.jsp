@@ -5,6 +5,6 @@
 </head>
 <body>
 Ошибка!<br><br>
-<%=request.getAttribute("errorMessage")%><br>
+<%=request.getAttribute("errorMessageAttribute")%><br>
 </body>
 </html>

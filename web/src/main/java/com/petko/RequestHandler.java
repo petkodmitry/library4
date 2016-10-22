@@ -18,14 +18,14 @@ public class RequestHandler {
         Command command;
         if (cmd != null && (command = CommandType.getCommand(cmd)) != null) {
             command.execute(request, response);
-            if (request.getAttribute("errorMessage") != null) {
+            if (request.getAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE) != null) {
                 showErrorPage(request, response);
             } else {
                 RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher((String) request.getAttribute("forward"));
                 dispatcher.forward(request, response);
             }
         } else {
-            request.setAttribute("errorMessage", "Команда не распознана");
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, "Команда не распознана");
             showErrorPage(request, response);
         }
     }
