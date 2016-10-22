@@ -1,5 +1,8 @@
 package com.petko;
 
+import com.petko.constants.Constants;
+import com.petko.managers.ResourceDaoManager;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,12 +10,13 @@ import java.sql.SQLException;
 public class MySQLConnection {
     public static Connection getConnection() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/library4?useUnicode=yes&characterEncoding=UTF-8"
+            Class.forName(ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_DRIVER));
+            return DriverManager.getConnection(ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_URL)
 //                    + "&useJDBCCompliantTimezoneShift=true"
 //                    + "&useLegacyDatetimeCode=false"
 //                    + "&serverTimezone=UTC"
-                    ,"root3", "1903");
+                    , ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_USER)
+                    , ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_PSW));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {

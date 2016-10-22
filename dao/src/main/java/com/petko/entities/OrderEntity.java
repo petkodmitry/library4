@@ -2,7 +2,7 @@ package com.petko.entities;
 
 import java.util.Date;
 
-public class OrderEntity {
+public class OrderEntity extends Entity{
     private String login;
     private int bookId;
     private OrderStatus status;

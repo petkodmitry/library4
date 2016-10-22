@@ -1,5 +1,7 @@
 package com.petko;
 
+import com.petko.managers.PoolManager;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,8 +9,9 @@ import java.sql.SQLException;
 
 public class LoginCheck {
     public boolean check(String login, String password) {
-        Connection connection = MySQLConnection.getConnection();
+        Connection connection = PoolManager.getInstance().getConnection();
         if (connection == null) return false;
+        // TODO перенести в dao
         try {
             PreparedStatement statement = null;
             try {
@@ -24,7 +27,8 @@ public class LoginCheck {
                 }
             } finally {
                 if (statement != null) statement.close();
-                connection.close();
+//                connection.close();
+                PoolManager.getInstance().releaseConnection(connection);
             }
         } catch (SQLException e) {
             e.printStackTrace();
