@@ -5,7 +5,17 @@ import com.petko.entities.OrderEntity;
 import java.util.List;
 
 public class OrderDao implements Dao<OrderEntity> {
-    // TODO singleton
+    private static OrderDao instance;
+
+    private OrderDao() {}
+
+    public static synchronized OrderDao getInstance() {
+        if(instance == null){
+            instance = new OrderDao();
+        }
+        return instance;
+    }
+
     public void add(OrderEntity entity) {
 
     }

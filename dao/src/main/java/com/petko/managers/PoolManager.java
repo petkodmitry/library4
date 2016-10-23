@@ -26,12 +26,12 @@ public class PoolManager {
 
     public void releaseConnection(Connection connection){
         if(connection != null){
-            try{
-                connection.close();
+//            try{
+//                connection.close();
                 connectionHolder.remove();
-            } catch(SQLException e){
+            /*} catch(SQLException e){
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 }

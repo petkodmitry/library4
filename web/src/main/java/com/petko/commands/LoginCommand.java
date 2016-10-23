@@ -1,8 +1,8 @@
 package com.petko.commands;
 
-import com.petko.LoginCheck;
 import com.petko.ResourceManager;
 import com.petko.constants.Constants;
+import com.petko.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,11 +13,11 @@ public class LoginCommand extends AbstractCommand {
         HttpSession session = request.getSession();
         String login = request.getParameter("login");
         String password = request.getParameter("password");
-        LoginCheck loginCheck = new LoginCheck();
-        if (loginCheck.check(login, password)) {
-            request.setAttribute("user", login);
+//        UserService.getInstance().isLoginSuccess(login, password);  // new
+        if (UserService.getInstance().isLoginSuccess(login, password)) {
+            session.setAttribute("user", login);
             String page = ResourceManager.getInstance().getProperty(Constants.PAGE_MAIN);
-            request.setAttribute("forward", page);
+            setForwardPage(request, page);
         } else {
             setErrorMessage(request, "Неверный логин или пароль!");
         }

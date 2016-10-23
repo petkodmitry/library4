@@ -21,7 +21,8 @@ public class RequestHandler {
             if (request.getAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE) != null) {
                 showErrorPage(request, response);
             } else {
-                RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher((String) request.getAttribute("forward"));
+                RequestDispatcher dispatcher = request.getServletContext().
+                        getRequestDispatcher((String) request.getAttribute(Constants.FORWARD_PAGE_ATTRIBUTE));
                 dispatcher.forward(request, response);
             }
         } else {

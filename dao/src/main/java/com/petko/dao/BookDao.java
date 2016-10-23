@@ -5,7 +5,17 @@ import com.petko.entities.BookEntity;
 import java.util.List;
 
 public class BookDao implements Dao<BookEntity> {
-    // TODO singleton
+    private static BookDao instance;
+
+    private BookDao() {}
+
+    public static synchronized BookDao getInstance() {
+        if(instance == null){
+            instance = new BookDao();
+        }
+        return instance;
+    }
+
     public void add(BookEntity entity) {
 
     }

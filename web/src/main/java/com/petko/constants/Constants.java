@@ -9,4 +9,5 @@ public class Constants {
     public final static String PAGE_INDEX = "page.index";
 
     public final static String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
+    public final static String FORWARD_PAGE_ATTRIBUTE = "forward";
 }
