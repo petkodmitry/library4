@@ -15,6 +15,10 @@ public class ActiveUsers {
         connectedUsers.add(login);
     }
 
+    public static synchronized void removeUser(String login) {
+        if (isUserActive(login)) connectedUsers.remove(login);
+    }
+
     public static synchronized boolean isUserActive(String login) {
         return !(login == null) && !connectedUsers.isEmpty() && connectedUsers.contains(login);
     }

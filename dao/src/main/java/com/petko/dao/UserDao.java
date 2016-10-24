@@ -1,7 +1,6 @@
 package com.petko.dao;
 
 import com.petko.entities.UserEntity;
-import com.petko.managers.PoolManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +20,7 @@ public class UserDao implements Dao<UserEntity> {
         return instance;
     }
 
-    public boolean isLoginSuccess(Connection connection, String login, String password) {
+    public boolean isLoginSuccess(Connection connection, String login, String password) throws SQLException{
         try {
             PreparedStatement statement = null;
             ResultSet result = null;
@@ -38,9 +37,30 @@ public class UserDao implements Dao<UserEntity> {
 //                PoolManager.getInstance().releaseConnection(connection);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new SQLException("Ошибка выполнения запроса логина/пароля к базе");
         }
-        return false;
+//        return false;
+    }
+
+    public int getUserStatus(Connection connection, String login) throws SQLException{
+        try {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("SELECT isadmin FROM USERS WHERE login = ?");
+                statement.setString(1, login);
+                result = statement.executeQuery();
+                if (result.next()) {
+                    return result.getInt("isadmin");
+                }
+                return 0;
+            } finally {
+                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Ошибка выполнения запроса к базе об уровне пользователя");
+        }
     }
 
     public void add(UserEntity entity) {

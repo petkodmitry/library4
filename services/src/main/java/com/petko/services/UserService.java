@@ -1,10 +1,12 @@
 package com.petko.services;
 
 import com.petko.ActiveUsers;
+import com.petko.constants.Constants;
 import com.petko.dao.UserDao;
 import com.petko.entities.UserEntity;
 import com.petko.managers.PoolManager;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,16 +24,27 @@ public class UserService implements Service<UserEntity> {
         return instance;
     }
 
-    public void addToActiveUsers(String login) {
+    private void addToActiveUsers(String login) {
         // добавляет в List<String> активных пользователей
         ActiveUsers.addUser(login);
     }
 
-    public boolean isLoginSuccess(String login, String password) {
+    private void removeFromActiveUsers(String login) {
+        // удаляет из List<String> активных пользователей
+        ActiveUsers.removeUser(login);
+    }
+
+    public void logOut(HttpServletRequest request, String login) {
+        if (login != null) removeFromActiveUsers(login);
+        request.getSession().invalidate();
+
+    }
+
+    public boolean isLoginSuccess(HttpServletRequest request, String login, String password) {
+        if (login == null || password == null) return false;
         Connection connection = null;
         try {
             connection = PoolManager.getInstance().getConnection();
-            if (connection == null) return false;
             connection.setAutoCommit(false);
             if (UserDao.getInstance().isLoginSuccess(connection, login, password)) {
                 connection.commit();
@@ -42,7 +55,35 @@ public class UserService implements Service<UserEntity> {
                 return false;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String eMessage;
+            if ((eMessage = e.getMessage()) == null) eMessage = "Ошибка отправки запроса";
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, eMessage);
+            return false;
+        } catch (ClassNotFoundException e) {
+            String eMessage;
+            if ((eMessage = e.getMessage()) == null) eMessage = "Ошибка загрузки неизвестного класса";
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, eMessage);
+            return false;
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
+
+    public boolean isAdminUser(HttpServletRequest request, String login) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            return UserDao.getInstance().getUserStatus(connection, login) == 1;
+        } catch (SQLException e) {
+            String eMessage;
+            if ((eMessage = e.getMessage()) != null) eMessage = "Ошибка отправки запроса";
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, eMessage);
+            return false;
+        } catch (ClassNotFoundException e) {
+            String eMessage;
+            if ((eMessage = e.getMessage()) != null) eMessage = "Ошибка загрузки неизвестного класса";
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, eMessage);
             return false;
         } finally {
             PoolManager.getInstance().releaseConnection(connection);
@@ -50,7 +91,6 @@ public class UserService implements Service<UserEntity> {
     }
 
     public void add(UserEntity entity) {
-
     }
 
     public List<UserEntity> getAll() {

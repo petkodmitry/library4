@@ -1,4 +1,3 @@
-<%@ page import="com.petko.constants.Constants" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -6,6 +5,7 @@
 </head>
 <body>
 Ошибка!<br><br>
-<%=request.getAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE)%><br>
+${errorMessage}<br><br>
+<a href="controller?cmd=login">На главную</a>
 </body>
 </html>

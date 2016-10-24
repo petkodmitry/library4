@@ -16,7 +16,7 @@ public class PoolManager {
         return instance;
     }
 
-    public Connection getConnection() {
+    public Connection getConnection() throws ClassNotFoundException, SQLException{
         if (connectionHolder.get() == null) {
             Connection connection = MySQLConnection.getConnection();
             connectionHolder.set(connection);

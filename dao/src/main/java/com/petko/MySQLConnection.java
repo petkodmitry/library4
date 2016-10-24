@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLConnection {
-    public static Connection getConnection() {
+    public static Connection getConnection() throws ClassNotFoundException, SQLException{
         try {
             Class.forName(ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_DRIVER));
             return DriverManager.getConnection(ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_URL)
@@ -18,10 +18,10 @@ public class MySQLConnection {
                     , ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_USER)
                     , ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_PSW));
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new ClassNotFoundException("Не удалось загрузить класс " + ResourceDaoManager.getInstance().getProperty(Constants.MYSQL_DRIVER));
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new SQLException("Не удалось подключиться к базе");
         }
-        return null;
+//        return null;
     }
 }

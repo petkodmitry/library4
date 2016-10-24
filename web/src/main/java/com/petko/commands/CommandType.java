@@ -1,7 +1,7 @@
 package com.petko.commands;
 
 public enum CommandType {
-    LOGIN, SHOWUSERS;
+    LOGIN, SHOWUSERS, LOGOUT;
 
     public static CommandType getCommandType(String commandName) {
         try {
@@ -19,6 +19,8 @@ public enum CommandType {
                 return new LoginCommand();
             case SHOWUSERS:
                 return new ShowUsersCommand();
+            case LOGOUT:
+                return new LogoutCommand();
             default:
                 return null;
         }

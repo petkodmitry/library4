@@ -23,6 +23,7 @@
            name="password"
            title="Пароль"
            value=""><BR>
+    ${errorMessage}<BR><BR>
     <INPUT type="submit" value="Enter">
 </FORM>
 <HR>

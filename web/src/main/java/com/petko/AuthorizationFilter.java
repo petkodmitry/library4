@@ -9,16 +9,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-public class AuthorizationFilter implements Filter{
-    public void init(FilterConfig filterConfig) throws ServletException {}
+public class AuthorizationFilter implements Filter {
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         CommandType commandType = CommandType.getCommandType(request.getParameter("cmd"));
-        if (commandType == null ||
-                (!CommandType.LOGIN.equals(commandType) && ActiveUsers.isUserActive((String) session.getAttribute("user")))) {
+        if (/*commandType == null ||*/
+                (!CommandType.LOGIN.equals(commandType) && !ActiveUsers.isUserActive((String) session.getAttribute("user")))) {
             String page = ResourceManager.getInstance().getProperty(Constants.PAGE_INDEX);
             RequestDispatcher dispatcher = request.getRequestDispatcher(page);
             dispatcher.forward(request, response);
@@ -28,5 +29,6 @@ public class AuthorizationFilter implements Filter{
         }
     }
 
-    public void destroy() {}
+    public void destroy() {
+    }
 }
