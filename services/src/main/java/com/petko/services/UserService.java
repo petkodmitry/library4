@@ -9,7 +9,9 @@ import com.petko.managers.PoolManager;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserService implements Service<UserEntity> {
     private static UserService instance;
@@ -73,7 +75,6 @@ public class UserService implements Service<UserEntity> {
         Connection connection = null;
         try {
             connection = PoolManager.getInstance().getConnection();
-//            connection.setAutoCommit(false);
             return UserDao.getInstance().getUserStatus(connection, login) == 1;
         } catch (SQLException e) {
             String eMessage;
@@ -95,6 +96,30 @@ public class UserService implements Service<UserEntity> {
 
     public List<UserEntity> getAll() {
         return null;
+    }
+
+    public Set<UserEntity> getAll(HttpServletRequest request) {
+        Connection connection = null;
+        Set<UserEntity> result = new HashSet<UserEntity>();
+        try {
+            connection = PoolManager.getInstance().getConnection();
+            for (String login : UserDao.getInstance().getAllLogins(connection)) {
+                result.add(UserDao.getInstance().getByLogin(connection, login));
+            }
+        } catch (SQLException e) {
+            String eMessage;
+            if ((eMessage = e.getMessage()) != null) eMessage = "Ошибка отправки запроса";
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, eMessage);
+            return null;
+        } catch (ClassNotFoundException e) {
+            String eMessage;
+            if ((eMessage = e.getMessage()) != null) eMessage = "Ошибка загрузки неизвестного класса";
+            request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, eMessage);
+            return null;
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+        return result;
     }
 
     public UserEntity getByLogin(String login) {

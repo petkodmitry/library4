@@ -1,7 +1,5 @@
 package com.petko.commands;
 
-import com.petko.ResourceManager;
-import com.petko.constants.Constants;
 import com.petko.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +11,6 @@ public class LogoutCommand extends AbstractCommand {
         HttpSession session = request.getSession();
         String login = (String) session.getAttribute("user");
         UserService.getInstance().logOut(request, login);
-        String page = ResourceManager.getInstance().getProperty(Constants.PAGE_INDEX);
-        setForwardPage(request, page);
+        redirectToLoginPage(request);
     }
 }

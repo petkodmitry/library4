@@ -1,6 +1,7 @@
 package com.petko.entities;
 
 public class UserEntity extends Entity{
+    private int userId;
     private String firstName;
     private String lastName;
     private String login;
@@ -10,8 +11,16 @@ public class UserEntity extends Entity{
 
     @Override
     public String toString() {
-        return String.format("User [firstName=%s, lastName=%s, login=%s, password=%s, isAdmin=%b, isBlocked=%b]",
-                firstName, lastName, login, password, isAdmin, isBlocked);
+        return String.format("User [userId=%d, firstName=%s, lastName=%s, login=%s, password=%s, isAdmin=%b, isBlocked=%b]",
+                userId, firstName, lastName, login, password, isAdmin, isBlocked);
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {

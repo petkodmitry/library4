@@ -24,7 +24,16 @@
     <build>
         <finalName>library4</finalName>
         <plugins>
-            <plugin>
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <outputDirectory>${parent}</outputDirectory>
+                </configuration>
+            </plugin>-->
+
+            <!--<plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
@@ -32,18 +41,18 @@
                     <url>http://localhost:8080/manager/text</url>
                     <username>admin</username>
                     <password>admin</password>
-                    <path>/webapps/library4/<!--${project.build.finalName}--></path>
-                    <warFile>target/${project.build.finalName}.war</warFile>
+                    <path>${project.build.finalName}</path>
+                    <finalName>${project.build.finalName}.war</finalName>
                 </configuration>
                 <executions>
-                    <!--<execution>
+                    <execution>
                         <goals>
                             <goal>redeploy</goal>
                         </goals>
                         <phase>install</phase>
-                    </execution>-->
+                    </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 </project>

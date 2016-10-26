@@ -24,7 +24,8 @@
            title="Пароль"
            value=""><BR>
     ${errorMessage}<BR><BR>
-    <INPUT type="submit" value="Enter">
+    <INPUT title="Войти" type="submit" value="Войти">
+    <BUTTON style="position: relative; left: 30px" title="Зарегистрироваться в системе" formaction="controller?cmd=register" type="submit">Регистрация(не работает)</BUTTON>
 </FORM>
 <HR>
 </BODY>
