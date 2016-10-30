@@ -10,7 +10,7 @@
 Вы вошли в систему как АДМИНИСТРАТОР<BR><BR>
 <a href="controller?cmd=login">На главную</a><BR>
 <a href="controller?cmd=showusers">Список пользователей</a><BR>
-<a href="controller?cmd=adduser">Добавить пользователя(не работает)</a><BR>
+<a href="controller?cmd=register">Добавить пользователя</a><BR>
 <a href="controller?cmd=waitingorders">Ожидающие заказы(не работает)</a><BR>
 <a href="controller?cmd=expiredorders">Просроченная задолженность(не работает)</a><BR>
 <a href="controller?cmd=searchbookadmin">Поиск книги(не работает)</a><BR>

@@ -18,7 +18,7 @@ public class AuthorizationFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         CommandType commandType = CommandType.getCommandType(request.getParameter("cmd"));
-        if (/*commandType == null ||*/
+        if (commandType != CommandType.REGISTER &&
                 (!CommandType.LOGIN.equals(commandType) && !ActiveUsers.isUserActive((String) session.getAttribute("user")))) {
             String page = ResourceManager.getInstance().getProperty(Constants.PAGE_INDEX);
             RequestDispatcher dispatcher = request.getRequestDispatcher(page);

@@ -22,6 +22,5 @@ public class MySQLConnection {
         } catch (SQLException e) {
             throw new SQLException("Не удалось подключиться к базе");
         }
-//        return null;
     }
 }

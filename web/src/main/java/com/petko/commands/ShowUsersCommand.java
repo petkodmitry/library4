@@ -11,13 +11,25 @@ import javax.servlet.http.HttpSession;
 import java.util.Set;
 
 public class ShowUsersCommand extends AbstractCommand {
+    private static ShowUsersCommand instance;
+
+    private ShowUsersCommand() {}
+
+    public static synchronized ShowUsersCommand getInstance() {
+        if(instance == null){
+            instance = new ShowUsersCommand();
+        }
+        return instance;
+    }
+
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String login = (String) session.getAttribute("user");
         // если админ, то выполняем команду
         if (UserService.getInstance().isAdminUser(request, login)) {
             Set<UserEntity> userSet = UserService.getInstance().getAll(request);
-            request.setAttribute(/*ResourceManager.getInstance().getProperty(*/Constants.USER_SET/*)*/, userSet);
+            if (userSet.isEmpty()) setErrorMessage(request, "Не удалось получить список пользователей");
+            request.setAttribute(Constants.USER_SET, userSet);
             String page = ResourceManager.getInstance().getProperty(Constants.PAGE_SHOW_USERS);
             setForwardPage(request, page);
         // если не админ, сообщаем о невозможности выполнения команды

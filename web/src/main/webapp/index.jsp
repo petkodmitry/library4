@@ -22,11 +22,13 @@
     <INPUT type="password"
            name="password"
            title="Пароль"
-           value=""><BR>
-    ${errorMessage}<BR><BR>
+           value=""><BR><BR>
     <INPUT title="Войти" type="submit" value="Войти">
-    <BUTTON style="position: relative; left: 30px" title="Зарегистрироваться в системе" formaction="controller?cmd=register" type="submit">Регистрация(не работает)</BUTTON>
+    <BUTTON style="position: relative; left: 25px" title="Зарегистрироваться в системе" formaction="controller?cmd=register" type="submit">Регистрация</BUTTON>
 </FORM>
 <HR>
+<c:if test="${requestScope['errorMessage'] != null}">
+    Ошибка: ${errorMessage}
+</c:if>
 </BODY>
 </HTML>

@@ -1,5 +1,6 @@
 package com.petko.dao;
 
+import com.petko.DaoException;
 import com.petko.entities.UserEntity;
 
 import java.sql.Connection;
@@ -22,11 +23,10 @@ public class UserDao implements Dao<UserEntity> {
         return instance;
     }
 
-    public boolean isLoginSuccess(Connection connection, String login, String password) throws SQLException{
+    public boolean isLoginSuccess(Connection connection, String login, String password) throws DaoException{
         try {
             PreparedStatement statement = null;
             ResultSet result = null;
-//            Connection connection = PoolManager.getInstance().getConnection();
             try {
                 statement = connection.prepareStatement("SELECT * FROM USERS WHERE login = ? AND psw = ?");
                 statement.setString(1, login);
@@ -36,15 +36,13 @@ public class UserDao implements Dao<UserEntity> {
             } finally {
                 if (result != null) result.close();
                 if (statement != null) statement.close();
-//                PoolManager.getInstance().releaseConnection(connection);
             }
         } catch (SQLException e) {
-            throw new SQLException("Ошибка выполнения запроса логина/пароля к базе");
+            throw new DaoException("Ошибка выполнения запроса логина/пароля к базе");
         }
-//        return false;
     }
 
-    public int getUserStatus(Connection connection, String login) throws SQLException{
+    public int getUserStatus(Connection connection, String login) throws DaoException{
         try {
             PreparedStatement statement = null;
             ResultSet result = null;
@@ -61,18 +59,43 @@ public class UserDao implements Dao<UserEntity> {
                 if (statement != null) statement.close();
             }
         } catch (SQLException e) {
-            throw new SQLException("Ошибка выполнения запроса к базе об уровне пользователя");
+            throw new DaoException("Ошибка выполнения запроса к базе об уровне пользователя");
         }
     }
 
+    @Override
     public void add(UserEntity entity) {
+
+    }
+
+    public void add(Connection connection, UserEntity entity) throws DaoException{
+        try {
+//            UserEntity answer = new UserEntity();
+            PreparedStatement statement = null;
+//            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("INSERT INTO USERS (fname, lname, login, psw, isadmin, isblocked) VALUES (?, ?, ?, ?, ?, ?)");
+                statement.setString(1, entity.getFirstName());
+                statement.setString(2, entity.getLastName());
+                statement.setString(3, entity.getLogin());
+                statement.setString(4, entity.getPassword());
+                statement.setBoolean(5, entity.isAdmin());
+                statement.setBoolean(6, entity.isBlocked());
+                statement.executeUpdate();
+            } finally {
+//                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения запроса на добавление пользователя");
+        }
     }
 
     public List<UserEntity> getAll() {
         return null;
     }
 
-    public Set<String> getAllLogins(Connection connection) throws SQLException{
+    public Set<String> getAllLogins(Connection connection) throws DaoException{
         Set<String> answer = new HashSet<String>();
         try {
             PreparedStatement statement = null;
@@ -90,7 +113,7 @@ public class UserDao implements Dao<UserEntity> {
                 if (statement != null) statement.close();
             }
         } catch (SQLException e) {
-            throw new SQLException("Ошибка выполнения запроса к базе о всех логинах");
+            throw new DaoException("Ошибка выполнения запроса к базе о всех логинах");
         }
     }
 
@@ -98,7 +121,7 @@ public class UserDao implements Dao<UserEntity> {
         return null;
     }
 
-    public UserEntity getByLogin(Connection connection, String login) throws SQLException{
+    public UserEntity getByLogin(Connection connection, String login) throws DaoException{
         try {
             UserEntity answer = new UserEntity();
             PreparedStatement statement = null;
@@ -108,13 +131,15 @@ public class UserDao implements Dao<UserEntity> {
                 statement.setString(1, login);
                 result = statement.executeQuery();
                 if (result.next()) {
+                    answer = createNewEntity(result.getString(2), result.getString(3), result.getString(4),
+                            result.getString(5), result.getBoolean(6), result.getBoolean(7));
                     answer.setUserId(result.getInt(1));
-                    answer.setFirstName(result.getString(2));
-                    answer.setLastName(result.getString(3));
-                    answer.setLogin(result.getString(4));
-                    answer.setPassword(result.getString(5));
-                    answer.setAdmin(result.getBoolean(6));
-                    answer.setBlocked(result.getBoolean(7));
+//                    answer.setFirstName(result.getString(2));
+//                    answer.setLastName(result.getString(3));
+//                    answer.setLogin(result.getString(4));
+//                    answer.setPassword(result.getString(5));
+//                    answer.setAdmin(result.getBoolean(6));
+//                    answer.setBlocked(result.getBoolean(7));
                 }
                 return answer;
             } finally {
@@ -122,8 +147,20 @@ public class UserDao implements Dao<UserEntity> {
                 if (statement != null) statement.close();
             }
         } catch (SQLException e) {
-            throw new SQLException("Ошибка выполнения запроса информации о пользователе");
+            throw new DaoException("Ошибка выполнения запроса информации о пользователе");
         }
+    }
+
+    public UserEntity createNewEntity(String name, String lastName, String login, String password,
+                                      boolean isAdmin, boolean isBlocked) {
+        UserEntity result = new UserEntity();
+        result.setFirstName(name);
+        result.setLastName(lastName);
+        result.setLogin(login);
+        result.setPassword(password);
+        result.setAdmin(isAdmin);
+        result.setBlocked(isBlocked);
+        return result;
     }
 
     public void delete(int id) {

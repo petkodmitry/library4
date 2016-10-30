@@ -36,7 +36,9 @@
 </table>
 
 <HR>
-${errorMessage}<br><br>
-<a href="controller?cmd=login">На главную</a>
+<BR><a href="controller?cmd=login">На главную</a><BR>
+<c:if test="${requestScope['errorMessage'] != null}">
+    <BR>Ошибка: ${errorMessage}
+</c:if>
 </BODY>
 </HTML>

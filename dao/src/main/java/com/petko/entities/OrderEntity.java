@@ -3,6 +3,7 @@ package com.petko.entities;
 import java.util.Date;
 
 public class OrderEntity extends Entity{
+    private int orderId;
     private String login;
     private int bookId;
     private OrderStatus status;
@@ -11,8 +12,16 @@ public class OrderEntity extends Entity{
 
     @Override
     public String toString() {
-        return String.format("Order [login=%s, bookId=%d, status=%s, startDate=%s, endDate=%s]",
-                login, bookId, status, startDate, endDate);
+        return String.format("Order [orderId=%d, login=%s, bookId=%d, status=%s, startDate=%s, endDate=%s]",
+                orderId, login, bookId, status, startDate, endDate);
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public String getLogin() {

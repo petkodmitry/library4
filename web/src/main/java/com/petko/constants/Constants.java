@@ -9,6 +9,8 @@ public class Constants {
     public final static String PAGE_MAIN = "page.main";
     public final static String PAGE_MAIN_ADMIN = "page.mainadmin";
     public final static String PAGE_SHOW_USERS = "page.showusers";
+    public final static String PAGE_REGISTRATION = "page.register";
+    public final static String PAGE_REGISTRATION_OK = "page.registerOk";
 
     public final static String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
     public final static String FORWARD_PAGE_ATTRIBUTE = "forward";

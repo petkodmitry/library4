@@ -1,28 +1,29 @@
 package com.petko.commands;
 
 public enum CommandType {
-    LOGIN, SHOWUSERS, LOGOUT;
+    LOGIN, REGISTER, SHOWUSERS, LOGOUT, UNKNOWN;
 
     public static CommandType getCommandType(String commandName) {
         try {
             return CommandType.valueOf(commandName.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return null;
+            return UNKNOWN;
         }
     }
 
     public static Command getCommand(String cmd) {
         CommandType type = getCommandType(cmd);
-        if (type == null) return null;
         switch (type) {
             case LOGIN:
-                return new LoginCommand();
+                return LoginCommand.getInstance();
+            case REGISTER:
+                return RegisterCommand.getInstance();
             case SHOWUSERS:
-                return new ShowUsersCommand();
+                return ShowUsersCommand.getInstance();
             case LOGOUT:
-                return new LogoutCommand();
+                return LogoutCommand.getInstance();
             default:
-                return null;
+                return UnknownCommand.getInstance();
         }
     }
 }
