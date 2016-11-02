@@ -40,7 +40,7 @@
 </form>
 
 <BR><a href="controller?cmd=login">На главную</a>
-<c:if test="${requestScope['errorMessage'] != null}">
+<BR><BR><c:if test="${requestScope['errorMessage'] != null}">
     Ошибка: ${errorMessage}
 </c:if>
 </body>

@@ -1,6 +1,6 @@
 package com.petko.entities;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class OrderEntity extends Entity{
     private int orderId;
@@ -15,6 +15,36 @@ public class OrderEntity extends Entity{
     public String toString() {
         return String.format("Order [orderId=%d, login=%s, bookId=%d, status=%s, startDate=%s, endDate=%s]",
                 orderId, login, bookId, status, startDate, endDate);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderEntity)) return false;
+
+        OrderEntity entity = (OrderEntity) o;
+
+        if (getOrderId() != entity.getOrderId()) return false;
+        if (getBookId() != entity.getBookId()) return false;
+        if (getLogin() != null ? !getLogin().equals(entity.getLogin()) : entity.getLogin() != null) return false;
+        if (getStatus() != entity.getStatus()) return false;
+        if (getPlaceOfIssue() != entity.getPlaceOfIssue()) return false;
+        if (getStartDate() != null ? !getStartDate().equals(entity.getStartDate()) : entity.getStartDate() != null)
+            return false;
+        return getEndDate() != null ? getEndDate().equals(entity.getEndDate()) : entity.getEndDate() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getOrderId();
+        result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
+        result = 31 * result + getBookId();
+        result = 31 * result + (getStatus() != null ? getStatus().hashCode() : 0);
+        result = 31 * result + (getPlaceOfIssue() != null ? getPlaceOfIssue().hashCode() : 0);
+        result = 31 * result + (getStartDate() != null ? getStartDate().hashCode() : 0);
+        result = 31 * result + (getEndDate() != null ? getEndDate().hashCode() : 0);
+        return result;
     }
 
     public int getOrderId() {

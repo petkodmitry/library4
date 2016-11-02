@@ -1,7 +1,6 @@
 package com.petko.dao;
 
 import com.petko.DaoException;
-import com.petko.entities.BookEntity;
 import com.petko.entities.OrderEntity;
 import com.petko.entities.OrderStatus;
 import com.petko.entities.PlaceOfIssue;
@@ -10,9 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 public class OrderDao implements Dao<OrderEntity> {
     private static OrderDao instance;
@@ -26,15 +24,14 @@ public class OrderDao implements Dao<OrderEntity> {
         return instance;
     }
 
-    public List<OrderEntity> getAllNewOrdersOfUser(Connection connection, String login) throws DaoException {
-        List<OrderEntity> answer = new ArrayList<>();
+    public Set<OrderEntity> getAllByUser(Connection connection, String login) throws DaoException {
+        Set<OrderEntity> answer = new HashSet<>();
         try {
             PreparedStatement statement = null;
             ResultSet result = null;
             try {
-                statement = connection.prepareStatement("SELECT * FROM ORDERS WHERE login = ? AND status = ?");
+                statement = connection.prepareStatement("SELECT * FROM ORDERS WHERE login = ?");
                 statement.setString(1, login);
-                statement.setString(2, OrderStatus.ORDERED.toString());
                 result = statement.executeQuery();
                 while (result.next()) {
                     OrderEntity entity;
@@ -49,7 +46,59 @@ public class OrderDao implements Dao<OrderEntity> {
                 if (statement != null) statement.close();
             }
         } catch (SQLException e) {
-            throw new DaoException("Ошибка выполнения поиска необработанных заказов пользователя");
+            throw new DaoException("Ошибка выполнения поиска заказов по пользователю");
+        }
+    }
+
+    public Set<OrderEntity> getAllByStatus(Connection connection, String status) throws DaoException {
+        Set<OrderEntity> answer = new HashSet<>();
+        try {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("SELECT * FROM ORDERS WHERE status = ?");
+                statement.setString(1, status);
+                result = statement.executeQuery();
+                while (result.next()) {
+                    OrderEntity entity;
+                    entity = createNewEntity(result.getString(2), result.getInt(3), OrderStatus.getOrderStatus(result.getString(4)),
+                            PlaceOfIssue.getPlaceOfIssue(result.getString(5)), result.getDate(6), result.getDate(7));
+                    entity.setOrderId(result.getInt(1));
+                    answer.add(entity);
+                }
+                return answer;
+            } finally {
+                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения поиска заказов по статусу");
+        }
+    }
+
+    public Set<OrderEntity> getAllByBookId(Connection connection, int bookId) throws DaoException {
+        Set<OrderEntity> answer = new HashSet<>();
+        try {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("SELECT * FROM ORDERS WHERE bid = ?");
+                statement.setInt(1, bookId);
+                result = statement.executeQuery();
+                while (result.next()) {
+                    OrderEntity entity;
+                    entity = createNewEntity(result.getString(2), bookId, OrderStatus.getOrderStatus(result.getString(4)),
+                            PlaceOfIssue.getPlaceOfIssue(result.getString(5)), result.getDate(6), result.getDate(7));
+                    entity.setOrderId(result.getInt(1));
+                    answer.add(entity);
+                }
+                return answer;
+            } finally {
+                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения поиска заказов по ID книги");
         }
     }
 
@@ -68,6 +117,25 @@ public class OrderDao implements Dao<OrderEntity> {
             }
         } catch (SQLException e) {
             throw new DaoException("Ошибка изменения статуса заказа");
+        }
+    }
+
+    // TODO объединить с changeStatusOfOrder() - сделать updateEntity()
+    public void changeEndDateOfOrder(Connection connection, int orderId, Date endDate) throws DaoException {
+        try {
+            PreparedStatement statement = null;
+//            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("UPDATE ORDERS SET enddate = ? WHERE oid = ?");
+                statement.setDate(1, endDate);
+                statement.setInt(2, orderId);
+                statement.executeUpdate();
+            } finally {
+//                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка изменения даты окончания заказа");
         }
     }
 
@@ -103,6 +171,28 @@ public class OrderDao implements Dao<OrderEntity> {
             }
         } catch (SQLException e) {
             throw new DaoException("Ошибка выполнения поиска заказа по ID");
+        }
+    }
+
+    public void add(Connection connection, OrderEntity entity) throws DaoException {
+        try {
+            PreparedStatement statement = null;
+//            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("INSERT INTO ORDERS (login, bid, status, placeofissue, startdate, enddate) VALUES (?, ?, ?, ?, ?, ?)");
+                statement.setString(1, entity.getLogin());
+                statement.setInt(2, entity.getBookId());
+                statement.setString(3, entity.getStatus().toString());
+                statement.setString(4, entity.getPlaceOfIssue().toString());
+                statement.setDate(5, entity.getStartDate());
+                statement.setDate(6, entity.getEndDate());
+                statement.executeUpdate();
+            } finally {
+//                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения запроса на добавление заказа");
         }
     }
 

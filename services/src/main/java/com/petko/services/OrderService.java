@@ -2,20 +2,20 @@ package com.petko.services;
 
 import com.petko.DaoException;
 import com.petko.ExceptionsHandler;
+import com.petko.constants.Constants;
 import com.petko.dao.BookDao;
 import com.petko.dao.OrderDao;
 import com.petko.entities.BookEntity;
 import com.petko.entities.OrderEntity;
 import com.petko.entities.OrderStatus;
+import com.petko.entities.PlaceOfIssue;
 import com.petko.managers.PoolManager;
 import com.petko.vo.OrderForMyOrdersList;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.sql.*;
+import java.sql.Date;
+import java.util.*;
 
 public class OrderService implements Service<OrderEntity>{
     private static OrderService instance;
@@ -29,17 +29,16 @@ public class OrderService implements Service<OrderEntity>{
         return instance;
     }
 
-    public void add(OrderEntity entity) {
-
-    }
-
     public List<OrderForMyOrdersList> getOrdersForOrdersList(HttpServletRequest request, String login) {
         List<OrderForMyOrdersList> result = new ArrayList<>();
         Connection connection = null;
         try {
             connection = PoolManager.getInstance().getConnection();
 //            connection.setAutoCommit(false);
-            List<OrderEntity> orderEntityList = (OrderDao.getInstance().getAllNewOrdersOfUser(connection, login));
+            Set<OrderEntity> orderEntityList = OrderDao.getInstance().getAllByUser(connection, login);
+            Set<OrderEntity> listByStatus = OrderDao.getInstance().getAllByStatus(connection, OrderStatus.ORDERED.toString());
+            orderEntityList.retainAll(listByStatus);
+
             for (OrderEntity entity: orderEntityList) {
                 OrderForMyOrdersList orderView = new OrderForMyOrdersList(entity.getOrderId(), entity.getBookId(),
                         entity.getPlaceOfIssue(), entity.getStartDate());
@@ -61,16 +60,60 @@ public class OrderService implements Service<OrderEntity>{
         Connection connection = null;
         try {
             connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
             OrderEntity entity = OrderDao.getInstance().getById(connection, orderID);
             if (entity.getLogin().equals(login) && entity.getStatus().equals(OrderStatus.ORDERED)) {
                 OrderDao.getInstance().changeStatusOfOrder(connection, orderID, OrderStatus.CLOSED);
+                OrderDao.getInstance().changeEndDateOfOrder(connection, orderID, new Date(Calendar.getInstance().getTime().getTime()));
             }
-//            connection.setAutoCommit(false);
         } catch (DaoException | SQLException | ClassNotFoundException e) {
             ExceptionsHandler.processException(request, e);
         } finally {
             PoolManager.getInstance().releaseConnection(connection);
         }
+    }
+
+    public void orderToHomeOrToRoom(HttpServletRequest request, String login, int bookID, boolean isToHome) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            Set<OrderEntity> orderEntityList = OrderDao.getInstance().getAllByUser(connection, login);
+            Set<OrderEntity> orderEntityList2 = new HashSet<>(orderEntityList);
+
+            Set<OrderEntity> listByStatus = OrderDao.getInstance().getAllByStatus(connection, OrderStatus.ORDERED.toString());
+            orderEntityList.retainAll(listByStatus);
+
+            listByStatus = OrderDao.getInstance().getAllByStatus(connection, OrderStatus.ON_HAND.toString());
+            orderEntityList2.retainAll(listByStatus);
+            orderEntityList.addAll(orderEntityList2);
+
+            Set<OrderEntity> listByBookId = OrderDao.getInstance().getAllByBookId(connection, bookID);
+            orderEntityList.retainAll(listByBookId);
+            if (orderEntityList.isEmpty()) {
+                long delay = 0L;
+                PlaceOfIssue place = PlaceOfIssue.READING_ROOM;
+                if (isToHome) {
+                    delay = 30L * 24L * 60L * 60L * 1_000L;
+                    place = PlaceOfIssue.HOME;
+                }
+                Date startDate = new Date(Calendar.getInstance().getTime().getTime());
+                Date endDate = new Date(startDate.getTime() + delay);
+                OrderEntity newEntity = OrderDao.getInstance().createNewEntity(login, bookID, OrderStatus.ORDERED, place,
+                        startDate, endDate);
+                OrderDao.getInstance().add(connection, newEntity);
+            } else {
+                request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, "Заказ на эту книгу имеется и активен");
+            }
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
+
+    public void add(OrderEntity entity) {
+
     }
 
     public List<OrderEntity> getAll() {
