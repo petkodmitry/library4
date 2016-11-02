@@ -78,6 +78,29 @@ public class BookDao implements Dao<BookEntity> {
         }
     }
 
+    public BookEntity getById(Connection connection, int id) throws DaoException {
+        BookEntity answer = new BookEntity();
+        try {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("SELECT * FROM BOOKS WHERE bid = ?");
+                statement.setInt(1, id);
+                result = statement.executeQuery();
+                if (result.next()) {
+                    answer = createNewEntity(result.getString(2), result.getString(3), result.getBoolean(4));
+                    answer.setBookId(id);
+                }
+                return answer;
+            } finally {
+                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения поиска книги по ID");
+        }
+    }
+
     public BookEntity createNewEntity(String title, String author, boolean isBusy) {
         BookEntity result = new BookEntity();
         result.setTitle(title);
@@ -90,6 +113,7 @@ public class BookDao implements Dao<BookEntity> {
         return null;
     }
 
+    @Override
     public BookEntity getById(int id) {
         return null;
     }
