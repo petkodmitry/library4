@@ -1,6 +1,5 @@
 package com.petko.commands;
 
-import com.petko.RequestHandler;
 import com.petko.ResourceManager;
 import com.petko.constants.Constants;
 import com.petko.entities.UserEntity;
@@ -25,8 +24,9 @@ public class RegisterCommand extends AbstractCommand {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
+        UserService service = UserService.getInstance();
         HttpSession session = request.getSession();
-        // перенести в методы service
+        // TODO перенести в методы service
         String page = ResourceManager.getInstance().getProperty(Constants.PAGE_REGISTRATION);
         UserEntity regData;
         /**
@@ -53,7 +53,7 @@ public class RegisterCommand extends AbstractCommand {
                 /**
                  * check if asked login exists in database
                  */
-                if (UserService.getInstance().isLoginExists(request, regData.getLogin())) {
+                if (service.isLoginExists(request, regData.getLogin())) {
                     request.setAttribute("unavailableMessage", "логин НЕдоступен!");
                 } else {
                     request.setAttribute("unavailableMessage", "логин доступен");
@@ -65,9 +65,10 @@ public class RegisterCommand extends AbstractCommand {
                             !"".equals(regData.getLogin()) &&
                             !"".equals(regData.getPassword()) &&
                             !"".equals(repeatPassword)) {
-                        if (UserService.getInstance().isAllPasswordRulesFollowed(regData.getPassword(), repeatPassword)) {
-                            UserService.getInstance().addNewEntityToDataBase(request, regData.getFirstName(), regData.getLastName(),
+                        if (service.isAllPasswordRulesFollowed(regData.getPassword(), repeatPassword)) {
+                            service.addNewEntityToDataBase(request, regData.getFirstName(), regData.getLastName(),
                                     regData.getLogin(), regData.getPassword(), regData.isAdmin(), regData.isBlocked());
+                            session.removeAttribute("regData");
                             page = ResourceManager.getInstance().getProperty(Constants.PAGE_REGISTRATION_OK);
                         } else {
                             setErrorMessage(request, "Пароль должен содержать 8 символов");

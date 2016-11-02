@@ -11,6 +11,7 @@ public class Constants {
     public final static String PAGE_SHOW_USERS = "page.showusers";
     public final static String PAGE_REGISTRATION = "page.register";
     public final static String PAGE_REGISTRATION_OK = "page.registerOk";
+    public final static String PAGE_SEARCH_BOOK_FOR_USER = "page.searchBookUser";
 
     public final static String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
     public final static String FORWARD_PAGE_ATTRIBUTE = "forward";

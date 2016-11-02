@@ -10,7 +10,10 @@
 </head>
 <body><H3>Регистрация нового пользователя прошла успешно!</H3>
 <HR>
-<BR><a href="controller?cmd=register">Зарегистрировать еще одного пользователя</a><BR><BR><BR>
-<a href="controller?cmd=login">На главную</a>
+<a href="controller?cmd=register">Зарегистрировать еще одного пользователя</a><BR><BR><BR>
+<a href="controller?cmd=login">На главную</a><BR>
+<c:if test="${requestScope['errorMessage'] != null}">
+    Ошибка: ${errorMessage}
+</c:if>
 </body>
 </html>

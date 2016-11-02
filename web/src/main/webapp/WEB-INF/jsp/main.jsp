@@ -10,8 +10,8 @@
 Вы вошли в систему как обычный пользователь<BR><BR>
 <a href="controller?cmd=login">На главную</a><BR>
 <a href="controller?cmd=mybooks">Мои книги(не работает)</a><BR>
-<a href="controller?cmd=searchbook">Поиск книги(не работает)</a><BR>
-<a href="controller?cmd=myorders">Мои заказы в очереди(не работает)</a><BR>
+<a href="controller?cmd=searchbook">Поиск и заказ книг</a><BR>
+<a href="controller?cmd=myorders">Мои заказы в очереди</a><BR>
 <BR><a href="controller?cmd=logout">Выход</a><BR>
 <c:if test="${requestScope['errorMessage'] != null}">
     <BR>Ошибка: ${errorMessage}

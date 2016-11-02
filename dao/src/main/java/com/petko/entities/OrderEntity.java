@@ -7,6 +7,7 @@ public class OrderEntity extends Entity{
     private String login;
     private int bookId;
     private OrderStatus status;
+    private PlaceOfIssue placeOfIssue;
     private Date startDate;
     private Date endDate;
 
@@ -46,6 +47,14 @@ public class OrderEntity extends Entity{
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public PlaceOfIssue getPlaceOfIssue() {
+        return placeOfIssue;
+    }
+
+    public void setPlaceOfIssue(PlaceOfIssue placeOfIssue) {
+        this.placeOfIssue = placeOfIssue;
     }
 
     public Date getStartDate() {

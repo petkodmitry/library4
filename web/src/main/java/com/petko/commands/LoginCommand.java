@@ -6,6 +6,7 @@ import com.petko.services.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 
 public class LoginCommand extends AbstractCommand {
     private static LoginCommand instance;
@@ -21,6 +22,13 @@ public class LoginCommand extends AbstractCommand {
 
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
+        // deleting all session attributes, except "user"
+        Enumeration<String> attributesNames = session.getAttributeNames();
+        while (attributesNames.hasMoreElements()) {
+            String attr = attributesNames.nextElement();
+            if (!"user".equals(attr)) session.removeAttribute(attr);
+        }
+
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         /*if (login == null || password == null) {
