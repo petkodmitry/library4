@@ -7,6 +7,10 @@
 <%@ page errorPage="error.jsp" %>
 <html>
 <head>
+    <%--<script src="js/jquery-3.1.1.js"></script>--%>
+    <%--<script src="js/orderToHome.js"></script>--%>
+    <%--<script src="js/orderToReadingRoom.js"></script>--%>
+
     <title>Поиск книг</title>
 </head>
 <body><H3>Поиск книги для заказа</H3>
@@ -23,6 +27,7 @@
     </table>
 </form>
 <BR><BR>
+
 <form>
     <table border="1">
         <c:if test="${searchBookForUser != null && !searchBookForUser.isEmpty()}">
@@ -49,15 +54,16 @@
                 </td>
                 <td>
                     <c:if test="${book.isBusy() == false}">
-                        <a href="controller?cmd=orderToReadingRoom&bookId=${book.getBookId()}">Заказать</a>
+                        <a href="controller?cmd=orderToReadingRoom&bookId=${book.getBookId()}" >Заказать</a>
                     </c:if>
                 </td>
             </tr>
         </c:forEach>
     </table>
 </form>
+<BR><a href="controller?cmd=myorders">Мои заказы в очереди</a>
 <BR><a href="controller?cmd=login">На главную</a>
-<c:if test="${requestScope['errorMessage'] != null}">
+<BR><BR><c:if test="${requestScope['errorMessage'] != null}">
     Ошибка: ${errorMessage}
 </c:if>
 </body>

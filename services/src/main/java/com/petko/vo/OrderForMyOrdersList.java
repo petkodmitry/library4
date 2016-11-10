@@ -11,14 +11,16 @@ public class OrderForMyOrdersList {
     private String author;
     private PlaceOfIssue place;
     private Date startDate;
+    private Date endDate;
 
-    public OrderForMyOrdersList(int orderId, int bookId, /*String title, String author,*/ PlaceOfIssue place, Date startDate) {
+    public OrderForMyOrdersList(int orderId, int bookId, PlaceOfIssue place, Date startDate, Date endDate) {
         this.orderId = orderId;
         this.bookId = bookId;
 //        this.title = title;
 //        this.author = author;
         this.place = place;
         this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public void setTitle(String title) {
@@ -51,5 +53,9 @@ public class OrderForMyOrdersList {
 
     public Date getStartDate() {
         return startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
     }
 }

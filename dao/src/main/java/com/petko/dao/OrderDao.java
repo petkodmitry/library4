@@ -4,6 +4,7 @@ import com.petko.DaoException;
 import com.petko.entities.OrderEntity;
 import com.petko.entities.OrderStatus;
 import com.petko.entities.PlaceOfIssue;
+import com.petko.managers.PoolManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.sql.Date;
 import java.util.*;
 
 public class OrderDao implements Dao<OrderEntity> {
+    private static PoolManager poolManager = PoolManager.getInstance();
     private static OrderDao instance;
 
     private OrderDao() {}
@@ -25,6 +27,7 @@ public class OrderDao implements Dao<OrderEntity> {
     }
 
     public Set<OrderEntity> getAllByUser(Connection connection, String login) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         Set<OrderEntity> answer = new HashSet<>();
         try {
             PreparedStatement statement = null;
@@ -51,6 +54,7 @@ public class OrderDao implements Dao<OrderEntity> {
     }
 
     public Set<OrderEntity> getAllByStatus(Connection connection, String status) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         Set<OrderEntity> answer = new HashSet<>();
         try {
             PreparedStatement statement = null;
@@ -77,6 +81,7 @@ public class OrderDao implements Dao<OrderEntity> {
     }
 
     public Set<OrderEntity> getAllByBookId(Connection connection, int bookId) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         Set<OrderEntity> answer = new HashSet<>();
         try {
             PreparedStatement statement = null;
@@ -103,6 +108,7 @@ public class OrderDao implements Dao<OrderEntity> {
     }
 
     public void changeStatusOfOrder(Connection connection, int orderId, OrderStatus newStatus) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         try {
             PreparedStatement statement = null;
 //            ResultSet result = null;
@@ -122,6 +128,7 @@ public class OrderDao implements Dao<OrderEntity> {
 
     // TODO объединить с changeStatusOfOrder() - сделать updateEntity()
     public void changeEndDateOfOrder(Connection connection, int orderId, Date endDate) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         try {
             PreparedStatement statement = null;
 //            ResultSet result = null;
@@ -151,6 +158,7 @@ public class OrderDao implements Dao<OrderEntity> {
     }
 
     public OrderEntity getById(Connection connection, int id) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         OrderEntity answer = new OrderEntity();
         try {
             PreparedStatement statement = null;
@@ -175,6 +183,7 @@ public class OrderDao implements Dao<OrderEntity> {
     }
 
     public void add(Connection connection, OrderEntity entity) throws DaoException {
+//        Connection connection = poolManager.getConnection();
         try {
             PreparedStatement statement = null;
 //            ResultSet result = null;

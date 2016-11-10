@@ -2,21 +2,24 @@ package com.petko.commands;
 
 import com.petko.ResourceManager;
 import com.petko.constants.Constants;
+import com.petko.entities.OrderStatus;
 import com.petko.services.OrderService;
+import com.petko.vo.OrderForMyOrdersList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
-public class OrderToReadingRoomCommand extends AbstractCommand{
-    private static OrderToReadingRoomCommand instance;
+public class MyBooksCommand extends AbstractCommand{
+    private static MyBooksCommand instance;
 
-    private OrderToReadingRoomCommand() {
+    private MyBooksCommand() {
     }
 
-    public static synchronized OrderToReadingRoomCommand getInstance() {
+    public static synchronized MyBooksCommand getInstance() {
         if (instance == null) {
-            instance = new OrderToReadingRoomCommand();
+            instance = new MyBooksCommand();
         }
         return instance;
     }
@@ -26,11 +29,11 @@ public class OrderToReadingRoomCommand extends AbstractCommand{
         OrderService service = OrderService.getInstance();
         HttpSession session = request.getSession();
         String login = (String) session.getAttribute("user");
-        int bookId = Integer.parseInt(request.getParameter("bookId"));
-        service.orderToHomeOrToRoom(request, login, bookId, false);
+        String page = ResourceManager.getInstance().getProperty(Constants.PAGE_MY_BOOKS);
+        List<OrderForMyOrdersList> myBooksList;
+        myBooksList = service.getOrdersByLoginAndStatus(request, login, OrderStatus.ON_HAND);
+        session.setAttribute("myBooksList", myBooksList);
 
-//        MyOrdersCommand.getInstance().execute(request, response);
-        String page = ResourceManager.getInstance().getProperty(Constants.PAGE_SEARCH_BOOK_FOR_USER);
         setForwardPage(request, page);
     }
 }

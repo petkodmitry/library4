@@ -2,7 +2,7 @@ package com.petko.commands;
 
 public enum CommandType {
     LOGIN, REGISTER, SHOWUSERS, LOGOUT, UNKNOWN, SEARCHBOOK, ORDERTOREADINGROOM, ORDERTOHOME, MYORDERS,
-    CANCELUSERORDER;
+    CANCELUSERORDER, MYBOOKS, PROLONGORDER;
 
     public static CommandType getCommandType(String commandName) {
         try {
@@ -33,6 +33,10 @@ public enum CommandType {
                 return MyOrdersCommand.getInstance();
             case CANCELUSERORDER:
                 return CancelUserOrderCommand.getInstance();
+            case MYBOOKS:
+                return MyBooksCommand.getInstance();
+            case PROLONGORDER:
+                return ProlongOrderCommand.getInstance();
             default:
                 return UnknownCommand.getInstance();
         }

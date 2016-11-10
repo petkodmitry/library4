@@ -29,19 +29,19 @@ public class OrderService implements Service<OrderEntity>{
         return instance;
     }
 
-    public List<OrderForMyOrdersList> getOrdersForOrdersList(HttpServletRequest request, String login) {
+    public List<OrderForMyOrdersList> getOrdersByLoginAndStatus(HttpServletRequest request, String login, OrderStatus orderStatus) {
         List<OrderForMyOrdersList> result = new ArrayList<>();
         Connection connection = null;
         try {
             connection = PoolManager.getInstance().getConnection();
 //            connection.setAutoCommit(false);
             Set<OrderEntity> orderEntityList = OrderDao.getInstance().getAllByUser(connection, login);
-            Set<OrderEntity> listByStatus = OrderDao.getInstance().getAllByStatus(connection, OrderStatus.ORDERED.toString());
+            Set<OrderEntity> listByStatus = OrderDao.getInstance().getAllByStatus(connection, orderStatus.toString());
             orderEntityList.retainAll(listByStatus);
 
             for (OrderEntity entity: orderEntityList) {
                 OrderForMyOrdersList orderView = new OrderForMyOrdersList(entity.getOrderId(), entity.getBookId(),
-                        entity.getPlaceOfIssue(), entity.getStartDate());
+                        entity.getPlaceOfIssue(), entity.getStartDate(), entity.getEndDate());
                 BookEntity bookEntity = BookDao.getInstance().getById(connection, entity.getBookId());
                 orderView.setTitle(bookEntity.getTitle());
                 orderView.setAuthor(bookEntity.getAuthor());
@@ -104,6 +104,32 @@ public class OrderService implements Service<OrderEntity>{
                 OrderDao.getInstance().add(connection, newEntity);
             } else {
                 request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, "Заказ на эту книгу имеется и активен");
+            }
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
+
+    public void prolongOrder(HttpServletRequest request, String login, int orderID) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            OrderEntity entity = OrderDao.getInstance().getById(connection, orderID);
+            if (entity.getLogin().equals(login) && entity.getStatus().equals(OrderStatus.ON_HAND)) {
+                long gap = 30L * 24L * 60L * 60L * 1_000L;
+                long delay = 5L * 24L * 60L * 60L * 1_000L;
+                Date endDate = entity.getEndDate();
+                Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
+                long difference = endDate.getTime() - currentDate.getTime();
+                if (difference > 0 && (difference - delay) < 6) {
+                    OrderDao.getInstance().changeEndDateOfOrder(connection, orderID, new Date(endDate.getTime() + gap));
+                } else {
+                    request.setAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE, "Заказ не должен быть просрочен, " +
+                            "и время до его окончания не должно превышать 5 дней");
+                }
             }
         } catch (DaoException | SQLException | ClassNotFoundException e) {
             ExceptionsHandler.processException(request, e);

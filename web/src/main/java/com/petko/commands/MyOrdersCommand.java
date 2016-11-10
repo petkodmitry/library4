@@ -2,6 +2,7 @@ package com.petko.commands;
 
 import com.petko.ResourceManager;
 import com.petko.constants.Constants;
+import com.petko.entities.OrderStatus;
 import com.petko.services.OrderService;
 import com.petko.vo.OrderForMyOrdersList;
 
@@ -30,7 +31,7 @@ public class MyOrdersCommand extends AbstractCommand{
         String login = (String) session.getAttribute("user");
         String page = ResourceManager.getInstance().getProperty(Constants.PAGE_MY_ORDERS);
         List<OrderForMyOrdersList> myOrdersList;
-        myOrdersList = service.getOrdersForOrdersList(request, login);
+        myOrdersList = service.getOrdersByLoginAndStatus(request, login, OrderStatus.ORDERED);
         request.setAttribute("myOrdersList", myOrdersList);
 
         setForwardPage(request, page);
