@@ -14,7 +14,7 @@
 <a href="controller?cmd=waitingOrders">Ожидающие заказы</a><BR>
 <a href="controller?cmd=openedOrders">Открытые заказы</a><BR>
 <a href="controller?cmd=expiredOrders">Просроченные заказы</a><BR>
-<a href="controller?cmd=blacklist">Черный список(не работает)</a><BR>
+<a href="controller?cmd=blacklist">Черный список</a><BR>
 <a href="controller?cmd=searchBookAdmin">Поиск книги(не работает)</a><BR>
 <BR><a href="controller?cmd=logout">Выход</a><BR>
 <c:if test="${requestScope['errorMessage'] != null}">

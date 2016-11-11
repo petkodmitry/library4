@@ -151,6 +151,31 @@ public class UserDao implements Dao<UserEntity> {
         }
     }
 
+    public Set<UserEntity> getAllByBlock(Connection connection, boolean isBlocked) throws DaoException{
+        Set<UserEntity> answer = new HashSet<UserEntity>();
+        try {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("SELECT * FROM USERS WHERE isblocked = ?");
+                statement.setBoolean(1, isBlocked);
+                result = statement.executeQuery();
+                while (result.next()) {
+                    UserEntity entity = createNewEntity(result.getString(2), result.getString(3), result.getString(4),
+                            result.getString(5), result.getBoolean(6), result.getBoolean(7));
+                    entity.setUserId(result.getInt(1));
+                    answer.add(entity);
+                }
+                return answer;
+            } finally {
+                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения запроса к базе о всех пользователях по блокировочному статусу");
+        }
+    }
+
     public void update(Connection connection, UserEntity entity) throws DaoException {
         try {
             PreparedStatement statement = null;

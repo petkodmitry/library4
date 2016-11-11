@@ -153,6 +153,22 @@ public class UserService implements Service<UserEntity> {
         }
     }
 
+    public Set<UserEntity> getUsersByBlock(HttpServletRequest request, boolean isBlocked) {
+        Connection connection = null;
+        Set<UserEntity> allByBlock = new HashSet<UserEntity>();
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            allByBlock = UserDao.getInstance().getAllByBlock(connection, isBlocked);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+            return Collections.emptySet();
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+        return allByBlock;
+    }
+
     public void add(UserEntity entity) {}
 
     public List<UserEntity> getAll() {
