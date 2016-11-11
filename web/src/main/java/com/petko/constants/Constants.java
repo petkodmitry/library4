@@ -15,6 +15,8 @@ public class Constants {
     public final static String PAGE_MY_ORDERS = "page.myOrders";
     public final static String PAGE_MY_BOOKS = "page.myBooks";
     public final static String PAGE_WAITING_ORDERS = "page.waitingOrders";
+    public final static String PAGE_OPENED_ORDERS = "page.openedOrders";
+    public final static String PAGE_EXPIRED_ORDERS = "page.expiredOrders";
 
     public final static String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
     public final static String FORWARD_PAGE_ATTRIBUTE = "forward";

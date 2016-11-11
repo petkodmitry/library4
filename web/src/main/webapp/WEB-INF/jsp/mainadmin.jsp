@@ -9,12 +9,13 @@
 <H3>Добро пожаловать, ${user}!</H3><HR>
 Вы вошли в систему как АДМИНИСТРАТОР<BR><BR>
 <a href="controller?cmd=login">На главную</a><BR>
-<a href="controller?cmd=showusers">Список пользователей</a><BR>
+<a href="controller?cmd=showUsers">Список пользователей</a><BR>
 <a href="controller?cmd=register">Добавить пользователя</a><BR>
-<a href="controller?cmd=waitingorders">Ожидающие заказы</a><BR>
-<a href="controller?cmd=expiredorders">Просроченная задолженность(не работает)</a><BR>
-<a href="controller?cmd=searchbookadmin">Поиск книги(не работает)</a><BR>
+<a href="controller?cmd=waitingOrders">Ожидающие заказы</a><BR>
+<a href="controller?cmd=openedOrders">Открытые заказы</a><BR>
+<a href="controller?cmd=expiredOrders">Просроченные заказы</a><BR>
 <a href="controller?cmd=blacklist">Черный список(не работает)</a><BR>
+<a href="controller?cmd=searchBookAdmin">Поиск книги(не работает)</a><BR>
 <BR><a href="controller?cmd=logout">Выход</a><BR>
 <c:if test="${requestScope['errorMessage'] != null}">
     <BR>Ошибка: ${errorMessage}

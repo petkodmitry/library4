@@ -12,14 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-public class WaitingOrdersCommand extends AbstractCommand{
-    private static WaitingOrdersCommand instance;
+public class OpenedOrdersCommand extends AbstractCommand{
+    private static OpenedOrdersCommand instance;
 
-    private WaitingOrdersCommand() {}
+    private OpenedOrdersCommand() {}
 
-    public static synchronized WaitingOrdersCommand getInstance() {
+    public static synchronized OpenedOrdersCommand getInstance() {
         if (instance == null) {
-            instance = new WaitingOrdersCommand();
+            instance = new OpenedOrdersCommand();
         }
         return instance;
     }
@@ -31,9 +31,9 @@ public class WaitingOrdersCommand extends AbstractCommand{
         String login = (String) session.getAttribute("user");
         if (userService.isAdminUser(request, login)) {
             OrderService service = OrderService.getInstance();
-            String page = ResourceManager.getInstance().getProperty(Constants.PAGE_WAITING_ORDERS);
-            List<AnyStatusOrdersList> waitingOrdersList = service.getOrdersByStatus(request, OrderStatus.ORDERED);
-            session.setAttribute("waitingOrdersList", waitingOrdersList);
+            String page = ResourceManager.getInstance().getProperty(Constants.PAGE_OPENED_ORDERS);
+            List<AnyStatusOrdersList> openedOrdersList = service.getOrdersByStatus(request, OrderStatus.ON_HAND);
+            session.setAttribute("openedOrdersList", openedOrdersList);
             setForwardPage(request, page);
         // если не админ, сообщаем о невозможности выполнения команды
         } else if ((request.getAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE)) == null) {

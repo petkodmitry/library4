@@ -79,13 +79,6 @@ public class UserService implements Service<UserEntity> {
         }
     }
 
-    public void add(UserEntity entity) {
-    }
-
-    public List<UserEntity> getAll() {
-        return null;
-    }
-
     public Set<UserEntity> getAll(HttpServletRequest request) {
         Connection connection = null;
         Set<UserEntity> result = new HashSet<UserEntity>();
@@ -144,6 +137,26 @@ public class UserService implements Service<UserEntity> {
         } finally {
             PoolManager.getInstance().releaseConnection(connection);
         }
+    }
+
+    public void setBlockUser(HttpServletRequest request, String login, boolean isBlocked) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+            UserEntity entity = UserDao.getInstance().getByLogin(connection, login);
+            entity.setBlocked(isBlocked);
+            UserDao.getInstance().update(connection, entity);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
+
+    public void add(UserEntity entity) {}
+
+    public List<UserEntity> getAll() {
+        return null;
     }
 
     public UserEntity getByLogin(String login) {

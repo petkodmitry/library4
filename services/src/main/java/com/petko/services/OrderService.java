@@ -5,13 +5,12 @@ import com.petko.ExceptionsHandler;
 import com.petko.constants.Constants;
 import com.petko.dao.BookDao;
 import com.petko.dao.OrderDao;
-import com.petko.entities.BookEntity;
-import com.petko.entities.OrderEntity;
-import com.petko.entities.OrderStatus;
-import com.petko.entities.PlaceOfIssue;
+import com.petko.dao.UserDao;
+import com.petko.entities.*;
 import com.petko.managers.PoolManager;
+import com.petko.vo.FullOrdersList;
 import com.petko.vo.OrderForMyOrdersList;
-import com.petko.vo.WaitingOrdersList;
+import com.petko.vo.AnyStatusOrdersList;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
@@ -57,8 +56,8 @@ public class OrderService implements Service<OrderEntity>{
         return result;
     }
 
-    public List<WaitingOrdersList> getWaitingOrdersByStatus(HttpServletRequest request, OrderStatus orderStatus) {
-        List<WaitingOrdersList> result = new ArrayList<>();
+    public List<AnyStatusOrdersList> getOrdersByStatus(HttpServletRequest request, OrderStatus orderStatus) {
+        List<AnyStatusOrdersList> result = new ArrayList<>();
         Connection connection = null;
         try {
             connection = PoolManager.getInstance().getConnection();
@@ -66,12 +65,46 @@ public class OrderService implements Service<OrderEntity>{
             Set<OrderEntity> listByStatus = OrderDao.getInstance().getAllByStatus(connection, orderStatus.toString());
 
             for (OrderEntity entity: listByStatus) {
-                WaitingOrdersList orderView = new WaitingOrdersList(entity.getOrderId(), entity.getLogin(), entity.getBookId(),
+                AnyStatusOrdersList orderView = new AnyStatusOrdersList(entity.getOrderId(), entity.getLogin(), entity.getBookId(),
                         entity.getPlaceOfIssue(), entity.getStartDate(), entity.getEndDate());
                 BookEntity bookEntity = BookDao.getInstance().getById(connection, entity.getBookId());
                 orderView.setTitle(bookEntity.getTitle());
                 orderView.setAuthor(bookEntity.getAuthor());
                 result.add(orderView);
+            }
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+            return Collections.emptyList();
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+        return result;
+    }
+
+    public List<FullOrdersList> getExpiredOrders(HttpServletRequest request) {
+        List<FullOrdersList> result = new ArrayList<>();
+        OrderStatus orderStatus = OrderStatus.ON_HAND;
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            Set<OrderEntity> listByStatus = OrderDao.getInstance().getAllByStatus(connection, orderStatus.toString());
+            Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
+
+            for (OrderEntity entity: listByStatus) {
+                long oneDay = 24L * 60L * 60L * 1_000L;
+                int delayDays = (int) ((currentDate.getTime() - entity.getEndDate().getTime())/oneDay);
+                if (delayDays > 0) {
+                    FullOrdersList orderView = new FullOrdersList(entity.getOrderId(), entity.getLogin(), entity.getBookId(),
+                            entity.getPlaceOfIssue(), entity.getStartDate(), entity.getEndDate());
+                    BookEntity bookEntity = BookDao.getInstance().getById(connection, entity.getBookId());
+                    UserEntity userEntity = UserDao.getInstance().getByLogin(connection, entity.getLogin());
+                    orderView.setBlocked(userEntity.isBlocked());
+                    orderView.setTitle(bookEntity.getTitle());
+                    orderView.setAuthor(bookEntity.getAuthor());
+                    orderView.setDelayDays(delayDays);
+                    result.add(orderView);
+                }
             }
         } catch (DaoException | SQLException | ClassNotFoundException e) {
             ExceptionsHandler.processException(request, e);
@@ -199,6 +232,21 @@ public class OrderService implements Service<OrderEntity>{
         } finally {
             PoolManager.getInstance().releaseConnection(connection);
         }
+    }
+
+    public OrderEntity getById(HttpServletRequest request, int orderID) {
+        OrderEntity answer = null;
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            answer = OrderDao.getInstance().getById(connection, orderID);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+        return answer;
     }
 
     public void add(OrderEntity entity) {

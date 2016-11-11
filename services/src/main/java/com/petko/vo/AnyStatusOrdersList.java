@@ -4,7 +4,7 @@ import com.petko.entities.PlaceOfIssue;
 
 import java.util.Date;
 
-public class WaitingOrdersList {
+public class AnyStatusOrdersList {
     private int orderId;
     private String login;
     private int bookId;
@@ -14,7 +14,7 @@ public class WaitingOrdersList {
     private Date startDate;
     private Date endDate;
 
-    public WaitingOrdersList(int orderId, String login, int bookId, PlaceOfIssue place, Date startDate, Date endDate) {
+    public AnyStatusOrdersList(int orderId, String login, int bookId, PlaceOfIssue place, Date startDate, Date endDate) {
         this.orderId = orderId;
         this.login = login;
         this.bookId = bookId;

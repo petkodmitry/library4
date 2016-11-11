@@ -151,6 +151,27 @@ public class UserDao implements Dao<UserEntity> {
         }
     }
 
+    public void update(Connection connection, UserEntity entity) throws DaoException {
+        try {
+            PreparedStatement statement = null;
+            try {
+                statement = connection.prepareStatement("UPDATE USERS SET fname = ?, lname = ?, login = ?, psw = ?, isadmin = ?, isblocked = ? WHERE uid = ?");
+                statement.setString(1, entity.getFirstName());
+                statement.setString(2, entity.getLastName());
+                statement.setString(3, entity.getLogin());
+                statement.setString(4, entity.getPassword());
+                statement.setBoolean(5, entity.isAdmin());
+                statement.setBoolean(6, entity.isBlocked());
+                statement.setInt(7, entity.getUserId());
+                statement.executeUpdate();
+            } finally {
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка обновления данных пользователя " + entity.getLogin());
+        }
+    }
+
     public UserEntity createNewEntity(String name, String lastName, String login, String password,
                                       boolean isAdmin, boolean isBlocked) {
         UserEntity result = new UserEntity();

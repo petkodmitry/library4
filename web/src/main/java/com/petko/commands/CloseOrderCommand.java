@@ -1,6 +1,8 @@
 package com.petko.commands;
 
 import com.petko.constants.Constants;
+import com.petko.dao.OrderDao;
+import com.petko.entities.OrderStatus;
 import com.petko.services.OrderService;
 import com.petko.services.UserService;
 
@@ -29,8 +31,13 @@ public class CloseOrderCommand extends AbstractCommand{
 
         if (UserService.getInstance().isAdminUser(request, login)) {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
+            OrderStatus status = service.getById(request, orderId).getStatus();
             service.closeOrder(request, null, orderId);
-            WaitingOrdersCommand.getInstance().execute(request, response);
+            if (OrderStatus.ORDERED.equals(status)) {
+                WaitingOrdersCommand.getInstance().execute(request, response);
+            } else if (OrderStatus.ON_HAND.equals(status)) {
+                OpenedOrdersCommand.getInstance().execute(request, response);
+            }
         } else if ((request.getAttribute(Constants.ERROR_MESSAGE_ATTRIBUTE)) == null) {
             setErrorMessage(request, "У Вас нет прав для выполнения данной команды");
             redirectToMainPage(request, login);
