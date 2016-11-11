@@ -6,28 +6,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class CancelUserOrderCommand extends AbstractCommand{
-    private static CancelUserOrderCommand instance;
+public class ProvideBookCommand extends AbstractCommand{
+    private static ProvideBookCommand instance;
 
-    private CancelUserOrderCommand() {
-    }
+    private ProvideBookCommand() {}
 
-    public static synchronized CancelUserOrderCommand getInstance() {
+    public static synchronized ProvideBookCommand getInstance() {
         if (instance == null) {
-            instance = new CancelUserOrderCommand();
+            instance = new ProvideBookCommand();
         }
         return instance;
     }
-
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         OrderService service = OrderService.getInstance();
         HttpSession session = request.getSession();
         String login = (String) session.getAttribute("user");
-        int orderId = Integer.parseInt(request.getParameter("orderId"));
-        service.closeOrder(request, login, orderId);
+        Integer orderId = Integer.parseInt(request.getParameter("orderId"));
+        service.provideBook(request, orderId);
 
-        MyOrdersCommand.getInstance().execute(request, response);
+        WaitingOrdersCommand.getInstance().execute(request, response);
     }
 }

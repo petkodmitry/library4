@@ -40,6 +40,36 @@ public class BookService implements Service<BookEntity>{
         return result;
     }
 
+    public void setBookBusy(HttpServletRequest request, Integer bookId, Boolean isBusy) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            BookEntity entity = BookDao.getInstance().getById(connection, bookId);
+            entity.setBusy(isBusy);
+            BookDao.getInstance().update(connection, entity);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
+
+    public boolean isBusy(HttpServletRequest request, Integer bookId) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            BookEntity entity = BookDao.getInstance().getById(connection, bookId);
+            return entity.isBusy();
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+        return true;
+    }
+
     public void add(BookEntity entity) {
 
     }
@@ -53,7 +83,6 @@ public class BookService implements Service<BookEntity>{
     }
 
     public void update(BookEntity entity) {
-
     }
 
     public void delete(int id) {

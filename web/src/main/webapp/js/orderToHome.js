@@ -1,11 +1,8 @@
 function orderToHome(id) {
     $.ajax({
         url: 'controller?cmd=orderToHome&bookId=' + id,
-        context: document.body,
-        success: id = 2,
-
+        context: document.body
     }).done(function() {
-
         location.reload();
     });
 }

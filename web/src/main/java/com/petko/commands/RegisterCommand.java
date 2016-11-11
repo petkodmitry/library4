@@ -26,6 +26,9 @@ public class RegisterCommand extends AbstractCommand {
     public void execute(HttpServletRequest request, HttpServletResponse response) {
         UserService service = UserService.getInstance();
         HttpSession session = request.getSession();
+        String login = (String) session.getAttribute("user");
+        if (!service.isAdminUser(request, login)) return;
+
         // TODO перенести в методы service
         String page = ResourceManager.getInstance().getProperty(Constants.PAGE_REGISTRATION);
         UserEntity regData;

@@ -11,7 +11,7 @@
 <a href="controller?cmd=login">На главную</a><BR>
 <a href="controller?cmd=showusers">Список пользователей</a><BR>
 <a href="controller?cmd=register">Добавить пользователя</a><BR>
-<a href="controller?cmd=waitingorders">Ожидающие заказы(не работает)</a><BR>
+<a href="controller?cmd=waitingorders">Ожидающие заказы</a><BR>
 <a href="controller?cmd=expiredorders">Просроченная задолженность(не работает)</a><BR>
 <a href="controller?cmd=searchbookadmin">Поиск книги(не работает)</a><BR>
 <a href="controller?cmd=blacklist">Черный список(не работает)</a><BR>

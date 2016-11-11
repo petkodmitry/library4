@@ -22,10 +22,6 @@ public class BookDao implements Dao<BookEntity> {
         return instance;
     }
 
-    public void add(BookEntity entity) {
-
-    }
-
     public Set<BookEntity> getBusyBooksByTitleOrAuthor(Connection connection, String searchTextInBook) throws DaoException {
         searchTextInBook = "%" + searchTextInBook + "%";
         Set<BookEntity> answer = new HashSet<>();
@@ -101,6 +97,24 @@ public class BookDao implements Dao<BookEntity> {
         }
     }
 
+    public void update(Connection connection, BookEntity entity) throws DaoException {
+        try {
+            PreparedStatement statement = null;
+            try {
+                statement = connection.prepareStatement("UPDATE BOOKS SET title = ?, author = ?, isbusy = ? WHERE bid = ?");
+                statement.setString(1, entity.getTitle());
+                statement.setString(2, entity.getAuthor());
+                statement.setBoolean(3, entity.isBusy());
+                statement.setInt(4, entity.getBookId());
+                statement.executeUpdate();
+            } finally {
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка обновления полей книги с ID " + entity.getBookId());
+        }
+    }
+
     public BookEntity createNewEntity(String title, String author, boolean isBusy) {
         BookEntity result = new BookEntity();
         result.setTitle(title);
@@ -108,6 +122,8 @@ public class BookDao implements Dao<BookEntity> {
         result.setBusy(isBusy);
         return result;
     }
+
+    public void add(BookEntity entity) {}
 
     public List<BookEntity> getAll() {
         return null;
@@ -118,8 +134,6 @@ public class BookDao implements Dao<BookEntity> {
         return null;
     }
 
-    public void delete(int id) {
-
-    }
+    public void delete(int id) {}
 
 }
