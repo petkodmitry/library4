@@ -74,6 +74,32 @@ public class BookDao implements Dao<BookEntity> {
         }
     }
 
+    public List<BookEntity> getBooksByTitleOrAuthor(Connection connection, String searchTextInBook) throws DaoException {
+        searchTextInBook = "%" + searchTextInBook + "%";
+        List<BookEntity> answer = new ArrayList<>();
+        try {
+            PreparedStatement statement = null;
+            ResultSet result = null;
+            try {
+                statement = connection.prepareStatement("SELECT * FROM BOOKS WHERE (title LIKE ? OR author LIKE ?)");
+                statement.setString(1, searchTextInBook);
+                statement.setString(2, searchTextInBook);
+                result = statement.executeQuery();
+                while (result.next()) {
+                    BookEntity bookEntity = createNewEntity(result.getString(2), result.getString(3), result.getBoolean(4));
+                    bookEntity.setBookId(result.getInt(1));
+                    answer.add(bookEntity);
+                }
+                return answer;
+            } finally {
+                if (result != null) result.close();
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка выполнения поиска книг в базе");
+        }
+    }
+
     public BookEntity getById(Connection connection, int id) throws DaoException {
         BookEntity answer = new BookEntity();
         try {
@@ -112,6 +138,38 @@ public class BookDao implements Dao<BookEntity> {
             }
         } catch (SQLException e) {
             throw new DaoException("Ошибка обновления полей книги с ID " + entity.getBookId());
+        }
+    }
+
+    public void delete(Connection connection, int id) throws DaoException {
+        try {
+            PreparedStatement statement = null;
+            try {
+                statement = connection.prepareStatement("DELETE FROM BOOKS WHERE bid = ?");
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            } finally {
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка удаления книги с ID " + id);
+        }
+    }
+
+    public void add(Connection connection, BookEntity entity) throws DaoException {
+        try {
+            PreparedStatement statement = null;
+            try {
+                statement = connection.prepareStatement("INSERT INTO BOOKS (title, author, isbusy) VALUES (?, ?, ?)");
+                statement.setString(1, entity.getTitle());
+                statement.setString(2, entity.getAuthor());
+                statement.setBoolean(3, false);
+                entity.setBookId(statement.executeUpdate());
+            } finally {
+                if (statement != null) statement.close();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Ошибка добавления новой книги в базу");
         }
     }
 

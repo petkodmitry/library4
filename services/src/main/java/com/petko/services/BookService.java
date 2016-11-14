@@ -7,6 +7,7 @@ import com.petko.entities.BookEntity;
 import com.petko.managers.PoolManager;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -34,6 +35,22 @@ public class BookService implements Service<BookEntity>{
         } catch (DaoException | SQLException | ClassNotFoundException e) {
             ExceptionsHandler.processException(request, e);
             return Collections.emptySet();
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+        return result;
+    }
+
+    public List<BookEntity> getAllBooksByTitleOrAuthor(HttpServletRequest request, String searchTextInBook) {
+        List<BookEntity> result = new ArrayList<>();
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            result = BookDao.getInstance().getBooksByTitleOrAuthor(connection, searchTextInBook);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+            return Collections.emptyList();
         } finally {
             PoolManager.getInstance().releaseConnection(connection);
         }
@@ -70,8 +87,35 @@ public class BookService implements Service<BookEntity>{
         return true;
     }
 
-    public void add(BookEntity entity) {
+    public void deleteBook(HttpServletRequest request, Integer bookId) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            BookDao.getInstance().delete(connection, bookId);
+//            entity.setBusy(isBusy);
+//            BookDao.getInstance().update(connection, entity);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
 
+    public void add(HttpServletRequest request, BookEntity bookEntity) {
+        Connection connection = null;
+        try {
+            connection = PoolManager.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+            BookDao.getInstance().add(connection, bookEntity);
+        } catch (DaoException | SQLException | ClassNotFoundException e) {
+            ExceptionsHandler.processException(request, e);
+        } finally {
+            PoolManager.getInstance().releaseConnection(connection);
+        }
+    }
+
+    public void add(BookEntity entity) {
     }
 
     public List<BookEntity> getAll() {

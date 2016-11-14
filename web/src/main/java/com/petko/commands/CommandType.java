@@ -3,7 +3,7 @@ package com.petko.commands;
 public enum CommandType {
     LOGIN, REGISTER, SHOWUSERS, LOGOUT, UNKNOWN, SEARCHBOOK, ORDERTOREADINGROOM, ORDERTOHOME, MYORDERS,
     CANCELUSERORDER, MYBOOKS, WAITINGORDERS, PROLONGORDER, OPENEDORDERS, PROVIDEBOOK, CLOSEORDER, EXPIREDORDERS,
-    BLOCKUSER, BLACKLIST, UNBLOCKUSER;
+    BLOCKUSER, BLACKLIST, UNBLOCKUSER, SEARCHBOOKADMIN, DELETEBOOK, ADDBOOK;
 
     public static CommandType getCommandType(String commandName) {
         try {
@@ -54,6 +54,12 @@ public enum CommandType {
                 return BlackListCommand.getInstance();
             case UNBLOCKUSER:
                 return UnblockUserCommand.getInstance();
+            case SEARCHBOOKADMIN:
+                return SearchBookAdminCommand.getInstance();
+            case DELETEBOOK:
+                return DeleteBookCommand.getInstance();
+            case ADDBOOK:
+                return AddBookCommand.getInstance();
             default:
                 return UnknownCommand.getInstance();
         }

@@ -15,7 +15,7 @@
 <a href="controller?cmd=openedOrders">Открытые заказы</a><BR>
 <a href="controller?cmd=expiredOrders">Просроченные заказы</a><BR>
 <a href="controller?cmd=blacklist">Черный список</a><BR>
-<a href="controller?cmd=searchBookAdmin">Поиск книги(не работает)</a><BR>
+<a href="controller?cmd=searchBookAdmin">Управление книгами</a><BR>
 <BR><a href="controller?cmd=logout">Выход</a><BR>
 <c:if test="${requestScope['errorMessage'] != null}">
     <BR>Ошибка: ${errorMessage}
